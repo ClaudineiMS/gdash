@@ -1,0 +1,37 @@
+# Sistema de Coleta e Processamento de Dados Climáticos
+
+Este projeto é uma aplicação full-stack para **coleta, enfileiramento, processamento, armazenamento e exibição de dados de clima**, usando **Python**, **Go**, e **RabbitMQ**, **Nest** e **React**.
+
+### 1. **Data Acquisition (Python Producer)**
+
+- Responsável por coletar dados climáticos.
+- Envia mensagens para a fila RabbitMQ `weather_queue`.
+- Estrutura de mensagem esperada:
+
+```json
+{
+  "city": "Belo Horizonte",
+  "timestamp_utc": "2025-11-22T03:38:00Z",
+  "temperature_c": 21.5,
+  "humidity_pct": 76,
+  "wind_speed_kmh": 10.4,
+  "condition_text": "Nublado",
+  "rain_probability_pct": 42
+}
+```
+
+---
+
+### 2. **Go Worker** 
+
+**worker em Go** que consome mensagens de clima (`WeatherMessage`) de uma fila RabbitMQ (`weather_queue`) e as processa. As mensagens são exibidas no console em formato de log.
+
+## Funcionalidades
+
+- Conecta ao RabbitMQ usando URL configurável via variável de ambiente.
+- Consome mensagens da fila `weather_queue`.
+- Exibe o **JSON formatado** das mensagens no console.
+- Confirma (ack) cada mensagem após processamento.
+
+---
+
