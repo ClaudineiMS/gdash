@@ -2,9 +2,25 @@
 
 Este projeto é uma aplicação full-stack para **coleta, enfileiramento, processamento, armazenamento e exibição de dados de clima**, usando **Python**, **Go**, e **RabbitMQ**, **Nest** e **React**.
 
+Este projeto é estruturado seguindo uma arquitetura de **micro serviços**, onde cada responsabilidade do sistema é isolada em um serviço independente. Isso facilita a escalabilidade, manutenção e evolução da aplicação ao longo do tempo.
+
+A estrutura geral do projeto é:
+
+```
+├── backend
+├── data-acquisition
+├── db
+├── frontend
+└── go-worker
+```
+
+![Arquitetura do Sistema](./img/clima.drawio.png)
+
+---
+
 ### 1. **Data Acquisition (Python Producer)**
 
-- Responsável por coletar dados climáticos.
+- Serviço responsável por coletar dados climáticos.
 - Envia mensagens para a fila RabbitMQ `weather_queue`.
 - Estrutura de mensagem esperada:
 
