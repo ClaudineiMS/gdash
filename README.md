@@ -14,7 +14,7 @@ A estrutura geral do projeto é:
 └── go-worker
 ```
 
-![Arquitetura do Sistema](./img/clima.png)
+![Arquitetura do Sistema](./img/clima.jpg)
 
 ---
 
