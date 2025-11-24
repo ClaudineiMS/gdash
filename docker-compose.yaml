@@ -14,7 +14,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - mynet
+      - gdash-net
 
   goworker:
     build: ./go-worker
@@ -22,12 +22,24 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-    environment:
-      RABBITMQ_URL: amqp://user:pass@rabbitmq:5672/
+    env_file:
+      - go-worker/.env
     restart: always
     networks:
-      - mynet
+      - gdash-net
+
+  data-producer:
+    build: ./data-acquisition
+    container_name: data-producer
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - data-acquisition/.env
+    restart: always
+    networks:
+      - gdash-net
 
 networks:
-  mynet:
+  gdash-net:
     driver: bridge
