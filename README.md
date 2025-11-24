@@ -1,4 +1,4 @@
-# Sistema de Coleta e Processamento de Dados Climáticos
+# Sistema de coleta e processamento de dados climáticos
 
 Este projeto é uma aplicação full-stack para **coleta, enfileiramento, processamento, armazenamento e exibição de dados de clima**, usando **Python**, **Go**, e **RabbitMQ**, **Nest** e **React**.
 
