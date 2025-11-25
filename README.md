@@ -54,7 +54,7 @@ Variáveis:
 
 **Execução via Docker**
 
-Utiliza a imagem python:3.11-slim, instala as dependências do projeto a partir do requirements.txt, copia o código fonte para o contêiner e define o comando final que executa o serviço.
+Utiliza a imagem **python:3.11-slim**, instala as dependências do projeto a partir do **requirements.txt**, copia o código fonte para o contêiner e define o comando final que executa o serviço.
 
 ---
 
