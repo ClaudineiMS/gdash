@@ -4,7 +4,7 @@ Este projeto é uma aplicação full-stack para **coleta, enfileiramento, proces
 
 Este projeto é estruturado seguindo uma arquitetura de **micro serviços**, onde cada responsabilidade do sistema é isolada em um serviço independente. Isso facilita a escalabilidade, manutenção e evolução da aplicação ao longo do tempo.
 
-A estrutura geral do projeto é:
+**Estrutura geral do projeto**:
 
 ```
 ├── backend
@@ -20,10 +20,16 @@ A estrutura geral do projeto é:
 
 ### 1. **Data Acquisition (Python Producer)**
 
-- Serviço responsável por coletar dados climáticos.
-- Envia mensagens para a fila RabbitMQ `weather_queue`.
-- Estrutura de mensagem esperada:
+Este microserviço executa um ciclo contínuo (a cada 30 segundos) composto por:
 
+ - Buscar coordenadas (latitude/longitude) da cidade via API de geocodificação
+ - Consultar dados climáticos usando a latitude e longitude
+ - Interpretar e traduzir o weathercode da API
+ - Formata o JSON de saída
+ - Enviar a mensagem normalizada para o RabbitMQ
+ - Repetir o processo em loop
+
+**Saída**
 ```json
 {
   "city": "Belo Horizonte",
@@ -36,13 +42,25 @@ A estrutura geral do projeto é:
 }
 ```
 
+**Configuração de ambiente (.env)**
+
+O serviço lê suas configurações do **.env**, isso permite trocar cidade, API ou fila sem alterar o código.
+
+Variáveis: 
+ - URL da API Open-Meteo
+ - URL da API de geocodificação
+ - Cidade alvo
+ - URL de conexão do RabbitMQ
+
+**Execução via Docker**
+
 ---
 
 ### 2. **Go Worker** 
 
 **worker em Go** que consome mensagens de clima (`WeatherMessage`) de uma fila RabbitMQ (`weather_queue`) e as processa. As mensagens são exibidas no console em formato de log.
 
-## Funcionalidades
+### Funcionalidades
 
 - Conecta ao RabbitMQ usando URL configurável via variável de ambiente.
 - Consome mensagens da fila `weather_queue`.
