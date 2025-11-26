@@ -40,6 +40,18 @@ services:
     networks:
       - gdash-net
 
+  backend:
+    build: ./backend
+    container_name: backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - rabbitmq
+    networks:
+      - gdash-net
+
 networks:
   gdash-net:
     driver: bridge
