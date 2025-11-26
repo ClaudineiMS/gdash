@@ -51,6 +51,22 @@ services:
       - rabbitmq
     networks:
       - gdash-net
+  
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root123
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - gdash-net
+
+volumes:
+  mongo_data:
 
 networks:
   gdash-net:
