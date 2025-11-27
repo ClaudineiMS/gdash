@@ -26,4 +26,21 @@ export class WeatherController {
 
     return res.send(csv);
   }
+
+  //export.xlsx
+  @Get('export.xlsx')
+  async exportXlsx(@Res() res: Response) {
+    const file = await this.weatherService.exportXlsx();
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="weather.xlsx"',
+    );
+
+    return res.send(file);
+  }
 }
