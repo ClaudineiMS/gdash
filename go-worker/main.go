@@ -1,13 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
+
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -45,7 +49,6 @@ func main() {
 	}
 	defer ch.Close()
 
-	// Declara fila 
 	_, err = ch.QueueDeclare(
 		queueName,
 		true,
@@ -58,7 +61,6 @@ func main() {
 		log.Fatalf("Falha ao declarar fila: %v", err)
 	}
 
-	// QoS / prefetch
 	if err := ch.Qos(prefetch, 0, false); err != nil {
 		log.Fatalf("Falha ao definir QoS: %v", err)
 	}
@@ -68,7 +70,7 @@ func main() {
 	msgs, err := ch.Consume(
 		queueName,
 		consumerTag,
-		false, 
+		false,
 		false,
 		false,
 		false,
@@ -86,23 +88,23 @@ func main() {
 			var m WeatherMessage
 			if err := json.Unmarshal(d.Body, &m); err != nil {
 				log.Printf("Falha ao parsear JSON: %v", err)
-				_ = d.Ack(false) // descarta mensagem malformada
-				continue
-			}
-
-			// Formata JSON com identação
-			formattedJSON, err := json.MarshalIndent(m, "", "  ")
-			if err != nil {
-				log.Printf("Falha ao formatar JSON: %v", err)
 				_ = d.Ack(false)
 				continue
 			}
 
-			log.Println("Mensagem recebida (Raw JSON formatado):")
-			log.Println(string(formattedJSON))
+			// Ajuste do timestamp
+			if m.TimestampUTC == "" {
+				m.TimestampUTC = time.Now().UTC().Format(time.RFC3339)
+			}
+
+			if err := sendToNestAPI(m); err != nil {
+				log.Printf("Falha ao tentar conectar com o backend: %v", err)
+				_ = d.Ack(false)
+				continue
+			}
 
 			_ = d.Ack(false)
-			log.Println("Mensagem confirmada")
+			log.Println("Dados enviados para o backend")
 		}
 		log.Println("Canal de mensagens fechado")
 	}()
@@ -126,4 +128,22 @@ func getenvInt(key string, def int) int {
 		}
 	}
 	return def
+}
+
+func sendToNestAPI(msg WeatherMessage) error {
+	url := os.Getenv("NEST_API_URL")
+
+	jsonData, _ := json.Marshal(msg)
+
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 201 && resp.StatusCode != 200 {
+		return fmt.Errorf("Erro ao salvar no NestJS: status %d", resp.StatusCode)
+	}
+
+	return nil
 }
