@@ -12,6 +12,7 @@ OPENMETEO_URL = os.getenv("OPENMETEO_URL")
 GEOCODE_URL = os.getenv("OPENMETEO_GEOCODE_URL")
 CITY = os.getenv("CITY")
 RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+TIME = os.getenv("TIME")
 
 # ------------------------
 # 1 - Buscar latitude/longitude da cidade
@@ -137,11 +138,11 @@ def job():
 
 
 # ------------------------
-# 7 - Loop a cada 30 segundos
+# 7 - Loop para buscar os dados
 # ------------------------
 if __name__ == "__main__":
-    print("🚀 Processador iniciando... rodando a cada 30 segundos!")
+    print("🚀 Busca de dados iniciada - a cada ", TIME, " segundos")
     while True:
         job()
-        print("[⏲] Aguardando 30 segundos...\n")
-        time.sleep(30)
+        print("Aguardando ", TIME,  "segundos...\n")
+        time.sleep(int(TIME))
