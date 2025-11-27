@@ -28,7 +28,7 @@ export class WeatherService {
 
     const headers = Object.keys(rows[0]);
 
-    // Remover campos internos do Mongo (_id, __v)
+    // Remover campos internos do Mongo
     const filteredHeaders = headers.filter(
       (h) => h !== '_id' && h !== '__v' && h !== 'createdAt' && h !== 'updatedAt'
     );
