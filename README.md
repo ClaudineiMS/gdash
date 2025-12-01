@@ -9,7 +9,6 @@ Este projeto é estruturado seguindo uma arquitetura de **micro serviços**, ond
 ```
 ├── backend
 ├── data-acquisition
-├── db
 ├── frontend
 └── go-worker
 ```
