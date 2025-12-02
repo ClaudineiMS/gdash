@@ -72,5 +72,31 @@ Utiliza a imagem **python:3.11-slim**, instala as dependências do projeto a par
 
 ### 3. **Backend Nest**
 
+O back-end é construído com NestJS e TypeScript, responsável por gerenciar usuários, processar dados climáticos e fornecer endpoints para consumo pelo front-end. Ele é organizado em módulos e segue boas práticas de arquitetura modular do NestJS.
 
+**Estrutura Geral**
 
+O diretório src contém todo o código da aplicação, organizado da seguinte forma:
+
+ - app.controller.ts / app.service.ts / app.module.ts / main.ts:
+   Ponto de entrada da aplicação e configuração global do módulo principal.
+
+  **Módulo Users (src/users):**
+    Responsável por gerenciar usuários da aplicação. Inclui:
+
+      - **DTOs:** Objetos de transferência de dados para criação e atualização de usuários.
+
+      - **user.controller.ts:** Define os endpoints relacionados a usuários (CRUD).
+
+      - **user.service.ts:** Contém a lógica de negócio para operações de usuários.
+
+      - **user.schema.ts:** Define o schema do usuário para integração com o banco de dados.
+
+  **Módulo Weather (src/weather):**
+    Responsável por processar e fornecer dados climáticos. Inclui:
+
+      - **weather.controller.ts:** Endpoints para consulta e processamento de dados do clima.
+
+      - **weather.service.ts:** Contém a lógica de negócio para lidar com dados climáticos e integração com serviços externos (como Open-Meteo ou OpenWeather).
+
+      -**weather.schema.ts:** Define o schema dos dados de clima no banco de dados.
