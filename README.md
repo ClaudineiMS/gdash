@@ -84,19 +84,24 @@ O diretório src contém todo o código da aplicação, organizado da seguinte f
   **Módulo Users (src/users):**
     Responsável por gerenciar usuários da aplicação. Inclui:
 
-      - **DTOs:** Objetos de transferência de dados para criação e atualização de usuários.
+- **DTOs:** Objetos de transferência de dados para criação e atualização de usuários.
+- **user.controller.ts:** Define os endpoints relacionados a usuários (CRUD).
+- **user.service.ts:** Contém a lógica de negócio para operações de usuários.
+- **user.schema.ts:** Define o schema do usuário para integração com o banco de dados.
 
-      - **user.controller.ts:** Define os endpoints relacionados a usuários (CRUD).
-
-      - **user.service.ts:** Contém a lógica de negócio para operações de usuários.
-
-      - **user.schema.ts:** Define o schema do usuário para integração com o banco de dados.
-
-  **Módulo Weather (src/weather):**
+**Módulo Weather (src/weather):**
     Responsável por processar e fornecer dados climáticos. Inclui:
 
-      - **weather.controller.ts:** Endpoints para consulta e processamento de dados do clima.
+- **weather.controller.ts:** Endpoints para consulta e processamento de dados do clima.
+- **weather.service.ts:** Contém a lógica de negócio para lidar com dados climáticos e integração com serviços externos (como Open-Meteo ou OpenWeather).
+- **weather.schema.ts:** Define o schema dos dados de clima no banco de dados.
 
-      - **weather.service.ts:** Contém a lógica de negócio para lidar com dados climáticos e integração com serviços externos (como Open-Meteo ou OpenWeather).
+**Funcionalidade Geral**
 
-      -**weather.schema.ts:** Define o schema dos dados de clima no banco de dados.
+O back-end da funciona como a espinha dorsal da aplicação, recebendo e processando dados climáticos, gerenciando usuários e expondo APIs REST para o front-end. Ele se integra com:
+
+- Banco de dados (MongoDB).
+- Fila de mensagens (RabbitMQ) para processamentos assíncronos no worker Go.
+- Serviços externos de clima para coletar dados em tempo real.
+
+---
