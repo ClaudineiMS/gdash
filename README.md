@@ -105,3 +105,5 @@ O back-end da funciona como a espinha dorsal da aplicação, recebendo e process
 - Serviços externos de clima para coletar dados em tempo real.
 
 ---
+
+## 4. **Frontend**
