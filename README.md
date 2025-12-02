@@ -4,12 +4,26 @@ Este projeto é uma aplicação full-stack para **coleta, enfileiramento, proces
 
 Este projeto é estruturado seguindo uma arquitetura de **micro serviços**, onde cada responsabilidade do sistema é isolada em um serviço independente. Isso facilita a escalabilidade, manutenção e evolução da aplicação ao longo do tempo.
 
+---
+**Como rodar o projeto:**
+
+```bash
+docker compose up
+```
+
+**urls:**
+- rabbitmq: http://localhost:15672/#/queues  - [user: user, psw: pass]
+- mongo-express: http://localhost:8081/ - [user: admin, psw: admin]  
+
+---
+
 **Estrutura geral do projeto**:
 
 ```
 ├── backend
 ├── data-acquisition
 ├── frontend
+├── message-broker
 └── go-worker
 ```
 
