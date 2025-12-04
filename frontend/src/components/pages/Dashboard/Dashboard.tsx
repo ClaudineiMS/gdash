@@ -3,6 +3,7 @@ import { WeatherAPI } from "@/api/weather.api";
 import WeatherCard from "@/components/weather/WeatherCard";
 import WeatherTable from "@/components/weather/WeatherTable";
 import WeatherCharts from "@/components/weather/WeatherChart";
+import WeatherDayChart from "@/components/weather/WeatherDayChart";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,13 +21,10 @@ function downloadFile(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-
 export default function Dashboard() {
   const [weather, setWeather] = useState<any>(null);
-
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
-
   const [pagination, setPagination] = useState({
     page: 1,
     totalPages: 1,
@@ -34,6 +32,13 @@ export default function Dashboard() {
     limit: 10,
   });
 
+  // Novo state para gráfico do dia
+  const [dayHistory, setDayHistory] = useState([]);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  ); // YYYY-MM-DD
+
+  // Carrega último registro geral
   useEffect(() => {
     async function load() {
       try {
@@ -46,11 +51,11 @@ export default function Dashboard() {
     load();
   }, []);
 
+  // Carrega histórico paginado
   useEffect(() => {
     async function loadHistory() {
       try {
         const response = await WeatherAPI.history(page, 10);
-
         setHistory(response.items);
         setPagination({
           page: response.page,
@@ -65,11 +70,24 @@ export default function Dashboard() {
     loadHistory();
   }, [page]);
 
-  if (!weather) return <p className="p-4 text-center text-zinc-400">Carregando...</p>;
+  // Carrega histórico do dia selecionado
+  useEffect(() => {
+    async function loadDayHistory() {
+      try {
+        const response = await WeatherAPI.getDay(selectedDate);
+        setDayHistory(response);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadDayHistory();
+  }, [selectedDate]);
+
+  if (!weather)
+    return <p className="p-4 text-center text-zinc-400">Carregando...</p>;
 
   return (
     <div className="p-8 space-y-10 bg-zinc-950 min-h-screen">
-
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
@@ -112,7 +130,6 @@ export default function Dashboard() {
         </DropdownMenu>
       </div>
 
-
       {/* CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <WeatherCard title="Cidade" value={weather.city} />
@@ -122,7 +139,26 @@ export default function Dashboard() {
       </div>
 
       {/* GRÁFICOS */}
-      <WeatherCharts history={history} />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-800">
+          <WeatherCharts history={history} />
+        </div>
+
+        <div className="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-800">
+          {/* Input de seleção de data */}
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="mb-4 p-2 rounded bg-zinc-800 text-white"
+          />
+
+          <WeatherDayChart
+            date={selectedDate}
+            onDateChange={(d) => setSelectedDate(d)}
+          />
+        </div>
+      </div>
 
       {/* TABELA PAGINADA */}
       <div className="space-y-4">

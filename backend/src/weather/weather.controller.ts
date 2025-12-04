@@ -1,10 +1,15 @@
-import { Body, Controller, Get, Post, Res, Query, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, Query, ParseIntPipe, Param } from '@nestjs/common';
 import { WeatherService } from './weather.service';
 import type { Response } from 'express';
-
+import dayjs from 'dayjs';
 @Controller('weather')
 export class WeatherController {
-  constructor(private weatherService: WeatherService) {}
+  constructor(private weatherService: WeatherService) { }
+
+  @Get('day-range')
+  async getByDayRange(@Query('start') start: string, @Query('end') end: string) {
+    return this.weatherService.getByDayRange(new Date(start), new Date(end));
+  }
 
   @Get('latest')
   async latest() {

@@ -117,5 +117,15 @@ export class WeatherService {
     };
   }
 
-
+  async getByDayRange(start: Date, end: Date) {
+    console.log('getByDayRange:', { start: start.toISOString(), end: end.toISOString() });
+    const sample = await this.weatherModel.findOne().lean();
+    console.log('sample.timestamp_utc (type):', sample?.timestamp_utc, typeof sample?.timestamp_utc);
+    return this.weatherModel.find({
+      timestamp_utc: {
+        $gte: start.toISOString(),
+        $lte: end.toISOString(),
+      },
+    }).sort({ timestamp_utc: 1 }).lean();
+  }
 }
