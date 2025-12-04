@@ -4,7 +4,12 @@ import type { Response } from 'express';
 
 @Controller('weather')
 export class WeatherController {
-  constructor(private weatherService: WeatherService) {}
+  constructor(private weatherService: WeatherService) { }
+
+  @Get('latest')
+  async latest() {
+    return this.weatherService.findLatest();
+  }
 
   @Post()
   async create(@Body() body: any) {

@@ -87,4 +87,11 @@ export class WeatherService {
     return workbook.xlsx.writeBuffer();
   }
 
+  async findLatest() {
+    return this.weatherModel
+      .findOne()
+      .sort({ timestamp_utc: -1 })
+      .exec();
+  }
+
 }

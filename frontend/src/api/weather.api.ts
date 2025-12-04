@@ -2,7 +2,7 @@ import { api } from "@/lib/http";
 
 export const WeatherAPI = {
   latest: async () => {
-    const { data } = await api.get("/weather"); 
+    const { data } = await api.get("/weather/latest"); 
     return data;
   },
 
