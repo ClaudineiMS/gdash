@@ -14,6 +14,7 @@ docker compose up
 **urls:**
 - rabbitmq: http://localhost:15672/#/queues  - [user: user, psw: pass]
 - mongo-express: http://localhost:8081/ - [user: admin, psw: admin]  
+- frontend: http://localhost:5173/
 
 ---
 
