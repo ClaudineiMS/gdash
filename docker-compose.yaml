@@ -82,6 +82,19 @@ services:
     networks:
       - gdash-net
 
+  # frontend:
+  #   build: ./frontend
+  #   container_name: gdash_frontend
+  #   ports:
+  #     - "5173:80"
+  #   depends_on:
+  #     - backend
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ./frontend/.env
+  #   networks:
+  #     - gdash-net
+
 volumes:
   mongo_data:
 
