@@ -3,6 +3,23 @@ import { WeatherAPI } from "@/api/weather.api";
 import WeatherCard from "@/components/weather/WeatherCard";
 import WeatherTable from "@/components/weather/WeatherTable";
 import WeatherCharts from "@/components/weather/WeatherChart";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+
+function downloadFile(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 
 export default function Dashboard() {
   const [weather, setWeather] = useState<any>(null);
@@ -49,18 +66,52 @@ export default function Dashboard() {
   }, [page]);
 
   if (!weather) return <p className="p-4 text-center text-zinc-400">Carregando...</p>;
-  console.log(history)
+
   return (
     <div className="p-8 space-y-10 bg-zinc-950 min-h-screen">
 
       {/* HEADER */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold text-white">Dashboard Climático</h1>
-         <p className="text-zinc-400">
-          Monitoramento em tempo real • Última atualização:{" "}
-          {new Date(weather.timestamp_utc).toLocaleString("pt-BR")}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-white">Dashboard Climático</h1>
+          <p className="text-zinc-400">
+            Monitoramento em tempo real • Última atualização:{" "}
+            {new Date(weather.timestamp_utc).toLocaleString("pt-BR")}
+          </p>
+        </div>
+
+        {/* MENU DE EXPORTAÇÃO */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="bg-zinc-800 text-white hover:bg-zinc-700">
+              📤 Exportar Dados
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="bg-zinc-900 text-white">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                const blob = await WeatherAPI.exportCsv();
+                downloadFile(blob, "weather.csv");
+              }}
+            >
+              Exportar CSV
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                const blob = await WeatherAPI.exportXlsx();
+                downloadFile(blob, "weather.xlsx");
+              }}
+            >
+              Exportar XLSX
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
 
       {/* CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
