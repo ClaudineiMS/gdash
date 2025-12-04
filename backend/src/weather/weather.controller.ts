@@ -1,14 +1,22 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, Query, ParseIntPipe } from '@nestjs/common';
 import { WeatherService } from './weather.service';
 import type { Response } from 'express';
 
 @Controller('weather')
 export class WeatherController {
-  constructor(private weatherService: WeatherService) { }
+  constructor(private weatherService: WeatherService) {}
 
   @Get('latest')
   async latest() {
     return this.weatherService.findLatest();
+  }
+
+  @Get('history')
+  async getHistory(
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 20,
+  ) {
+    return this.weatherService.getPaginatedHistory(page, limit);
   }
 
   @Post()
@@ -21,7 +29,6 @@ export class WeatherController {
     return this.weatherService.findAll();
   }
 
-  //export.csv
   @Get('export.csv')
   async exportCsv(@Res() res: Response) {
     const csv = await this.weatherService.exportCsv();
@@ -32,7 +39,6 @@ export class WeatherController {
     return res.send(csv);
   }
 
-  //export.xlsx
   @Get('export.xlsx')
   async exportXlsx(@Res() res: Response) {
     const file = await this.weatherService.exportXlsx();

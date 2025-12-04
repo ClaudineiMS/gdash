@@ -94,4 +94,28 @@ export class WeatherService {
       .exec();
   }
 
+  async getPaginatedHistory(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.weatherModel
+        .find()
+        .sort({ timestamp_utc: -1 }) // mais recente primeiro
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+
+      this.weatherModel.countDocuments(),
+    ]);
+
+    return {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      items,
+    };
+  }
+
+
 }

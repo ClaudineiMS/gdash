@@ -1,54 +1,38 @@
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-interface WeatherChartProps {
-  data: any[];
+export interface WeatherChartProps {
+  history: any[];
 }
 
-export default function WeatherChart({ data }: WeatherChartProps) {
-  // Formatar datas para exibir no gráfico
-  const formatted = data.map((item) => ({
-    ...item,
-    time: new Date(item.timestamp_utc).toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  }));
+export default function WeatherCharts({ history = [] }: WeatherChartProps) {
+  if (!history || history.length === 0) {
+    return (
+      <p className="text-zinc-400 text-center py-6">
+        Nenhum dado histórico disponível.
+      </p>
+    );
+  }
+
+  const data = [...history]
+    .reverse()
+    .map(item => ({
+      ...item,
+      created_at: new Date(item.createdAt).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    }));
 
   return (
-    <div className="w-full h-80 p-4 rounded-xl bg-white/5 backdrop-blur border border-white/10 shadow">
-      <h2 className="text-lg font-semibold mb-3 text-white">
-        Temperatura ao longo do tempo
-      </h2>
+    <div className="bg-zinc-900 p-6 rounded-xl">
+      <h2 className="text-xl font-bold text-white mb-4">Histórico de Temperatura</h2>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={formatted}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis dataKey="time" stroke="#ccc" />
-          <YAxis stroke="#ccc" />
-          <Tooltip
-            contentStyle={{
-              background: "rgba(20,20,20,0.8)",
-              border: "1px solid #333",
-              borderRadius: "6px",
-            }}
-            labelStyle={{ color: "#eee" }}
-            itemStyle={{ color: "#eee" }}
-          />
-          <Line
-            type="monotone"
-            dataKey="temperature_c"
-            stroke="#4ea8de"
-            strokeWidth={3}
-            dot={false}
-          />
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data}>
+          <XAxis dataKey="created_at" stroke="#888" />
+          <YAxis stroke="#888" />
+          <Tooltip />
+          <Line type="monotone" dataKey="temperature_c" stroke="#3b82f6" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

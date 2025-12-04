@@ -2,12 +2,14 @@ import { api } from "@/lib/http";
 
 export const WeatherAPI = {
   latest: async () => {
-    const { data } = await api.get("/weather/latest"); 
+    const { data } = await api.get("/weather/latest");
     return data;
   },
 
-  history: async () => {
-    const { data } = await api.get("/weather");
+  async history(page = 1, limit = 20) {
+    const { data } = await api.get("/weather/history", {
+      params: { page, limit },
+    });
     return data;
   },
 
