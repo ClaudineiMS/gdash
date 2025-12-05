@@ -155,7 +155,6 @@ export default function Dashboard() {
 
           <WeatherDayChart
             date={selectedDate}
-            onDateChange={(d) => setSelectedDate(d)}
           />
         </div>
       </div>
