@@ -22,7 +22,11 @@ function downloadFile(blob: Blob, filename: string) {
 }
 
 export default function Dashboard() {
+  const today = new Date().toISOString().split("T")[0];
+
   const [weather, setWeather] = useState<any>(null);
+
+  // PAGINAÇÃO
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -32,11 +36,9 @@ export default function Dashboard() {
     limit: 10,
   });
 
-  // Novo state para gráfico do dia
-  const [dayHistory, setDayHistory] = useState([]);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  ); // YYYY-MM-DD
+  // DATAS INDEPENDENTES PARA CADA GRÁFICO
+  const [selectedDateWindSpeed, setSelectedDateWindSpeed] = useState<string>(today);
+  const [selectedDateTemperature, setSelectedDateTemperature] = useState<string>(today);
 
   // Carrega último registro geral
   useEffect(() => {
@@ -70,35 +72,19 @@ export default function Dashboard() {
     loadHistory();
   }, [page]);
 
-  // Carrega histórico do dia selecionado
-  useEffect(() => {
-    async function loadDayHistory() {
-      try {
-        const response = await WeatherAPI.getDay(selectedDate);
-        setDayHistory(response);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    loadDayHistory();
-  }, [selectedDate]);
-
   if (!weather)
     return <p className="p-4 text-center text-zinc-400">Carregando...</p>;
 
   return (
     <div className="p-8 space-y-10 bg-zinc-950 min-h-screen">
-      {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-white">Dashboard Climático</h1>
+          <h1 className="text-4xl font-bold text-white text-center">Dashboard</h1>
           <p className="text-zinc-400">
             Monitoramento em tempo real • Última atualização:{" "}
             {new Date(weather.timestamp_utc).toLocaleString("pt-BR")}
           </p>
         </div>
-
-        {/* MENU DE EXPORTAÇÃO */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="bg-zinc-800 text-white hover:bg-zinc-700">
@@ -116,7 +102,6 @@ export default function Dashboard() {
             >
               Exportar CSV
             </DropdownMenuItem>
-
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={async () => {
@@ -129,40 +114,36 @@ export default function Dashboard() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      {/* CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <WeatherCard title="Cidade" value={weather.city} />
         <WeatherCard title="Temperatura" value={`${weather.temperature_c}°C`} />
         <WeatherCard title="Condição" value={weather.condition_text} />
         <WeatherCard title="Vento" value={`${weather.wind_speed_kmh} km/h`} />
       </div>
-
-      {/* GRÁFICOS */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-800">
-          <WeatherCharts history={history} />
-        </div>
-
-        <div className="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-800">
-          {/* Input de seleção de data */}
           <input
             type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            value={selectedDateWindSpeed}
+            onChange={(e) => setSelectedDateWindSpeed(e.target.value)}
             className="mb-4 p-2 rounded bg-zinc-800 text-white"
           />
 
-          <WeatherDayChart
-            date={selectedDate}
-          />
+          <WeatherCharts date={selectedDateWindSpeed} />
         </div>
-      </div>
+        <div className="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-zinc-800">
+          <input
+            type="date"
+            value={selectedDateTemperature}
+            onChange={(e) => setSelectedDateTemperature(e.target.value)}
+            className="mb-4 p-2 rounded bg-zinc-800 text-white"
+          />
+          <WeatherDayChart date={selectedDateTemperature} />
+        </div>
 
-      {/* TABELA PAGINADA */}
+      </div>
       <div className="space-y-4">
         <WeatherTable data={history} />
-
         <div className="flex items-center justify-between text-white">
           <button
             disabled={page <= 1}
